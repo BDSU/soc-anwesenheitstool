@@ -1,12 +1,12 @@
 # anwesenheitstool
 
-virtual enviroment\
+## virtual environment
 `python3 -m venv venv`
 
-On Windows, run:\
-`venv\Scripts\activate.bat`\
-On Unix or MacOS, run:\
+On Windows, run:
+`venv\Scripts\activate.bat`
+On Unix or MacOS, run:
 `source venv/bin/activate`
 
-Setup\
+## Setup
 `pip install -r requirements.txt`
