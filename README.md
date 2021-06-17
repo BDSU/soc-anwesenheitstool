@@ -5,6 +5,9 @@
 
 On Windows, run:
 `venv\Scripts\activate.bat`\
+falls das nicht geht, rufe vorher auf:
+`Set-ExecutionPolicy Unrestricted -Scope Process`
+
 On Unix or MacOS, run:
 `source venv/bin/activate`
 
