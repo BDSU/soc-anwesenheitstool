@@ -16,7 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+import meetup
+
 urlpatterns = [
-    path('heike/', include('heike.urls')),
     path('admin/', admin.site.urls),
+    path('', include('meetup.urls'))
 ]

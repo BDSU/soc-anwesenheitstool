@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load crispy_forms_filters %}
+
+{% load crispy_forms_tags %}
+{% load qr_code %}
+
+{% block title %}
+Meetings -
+{% endblock title %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h1 class="text-center">Anwesenheitstool</h1>
+    </div>
+    <div class="card-body">
+
+        <h4 class="py-2 rounded">Meetings hinzufügen</h4>
+        <form method="post">
+            {% csrf_token %}
+                {{ form.name|as_crispy_field }}
+                {{ form.date|as_crispy_field }}
+                {{ form.begin|as_crispy_field }}
+                {{ form.end|as_crispy_field }}
+                {{ form.category|as_crispy_field }}
+                <button type="submit" class="my-2 btn btn-success">Hinzufügen</button>
+        </form>
+
+        <h4 class="py-2 rounded">Alle Meetings</h4>
+        
+        <ul class="list-group">
+            {% for meeting in meetings %}
+            <li class="list-group-item list-group-item-action">
+                {{meeting.name}} - 
+                {{meeting.date}} - 
+                {{meeting.begin}} - 
+                {{meeting.end}} - 
+                {{meeting.category}}
+
+                <div class="float-right">
+                    <a href="{% url "update_meeting" meeting.id %}" class="btn btn-sm btn-info">Bearbeiten</a>
+                    <a href="{% url "delete_meeting" meeting.id %}" class="btn btn-sm btn-danger">Löschen</a>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<script>
+    $(function () {
+      $("#id_date").datepicker({
+        format:'dd/mm/yyyy',
+      });
+    });
+  </script>
+
+{% endblock content %}

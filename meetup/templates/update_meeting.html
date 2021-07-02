@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Update Meeting -
+{% endblock title %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h1 class="text-center">Anwesenheitstool</h1>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {{meeting_edit_form.name|as_crispy_field}}
+            {{meeting_edit_form.date|as_crispy_field}}
+            {{meeting_edit_form.begin|as_crispy_field}}
+            {{meeting_edit_form.end|as_crispy_field}}
+            {{meeting_edit_form.category|as_crispy_field}}
+            <button type="submit" class="my-2 btn btn-info">Aktualisieren</button>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}

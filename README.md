@@ -13,3 +13,31 @@ On Unix or MacOS, run:
 
 ## Setup
 `pip install -r requirements.txt`
+
+## Useful commands
+
+### Run local development server
+
+```
+python manage.py runserver
+```
+
+## Migration / Datenbank aktualisieren
+
+```
+python manage.py makemigrations meetup
+python manage.py migrate -n 
+```
+
+### Debug Admin User / Superuser
+
+Create: 
+```
+python manage.py createsuperuser
+```
+
+user: `admin-v`, `admin-k`
+
+mail: `***REMOVED***`, `***REMOVED***`
+
+password: `summerofcode`, `summerofcode`
