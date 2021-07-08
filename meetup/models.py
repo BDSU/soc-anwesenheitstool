@@ -5,6 +5,9 @@ from django.contrib.auth.models import User
 class MeetingCategories(models.Model):
     name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.name
+
 
 class Participant(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -21,23 +24,11 @@ class Participant(models.Model):
 
 
 class Meeting(models.Model):
-    # gehard-coded i know :D - TODO: use MeetingCategories in production
-    CATEGORIES = (
-        ("MITGLIEDERSITZUNG", 'Mitgliedersitzung'),
-        ("SCHULUNG", 'Schulung'),
-        ("PROJEKTTREFFEN", 'Projekttreffen'),
-        ("JOUR FIX", 'Jour Fix'),
-    )
-
     name = models.CharField(max_length=100)
     date = models.DateField()
     begin = models.TimeField()
     end = models.TimeField()
-    category = models.CharField(
-        max_length=100,
-        choices=CATEGORIES,
-        default="MITGLIEDERSITZUNG"
-    )
+    category = models.ForeignKey('MeetingCategories', on_delete=models.CASCADE, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
 
     participants = models.ManyToManyField(Participant, blank=True)

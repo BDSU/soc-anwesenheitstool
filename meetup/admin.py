@@ -14,6 +14,10 @@ class MeetingAdmin(admin.ModelAdmin):
     model = Meeting
     inlines = [ParticipantAdminInline]
 
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ['name']
+    model = MeetingCategories
+
 
 admin.site.register(Meeting, MeetingAdmin)
-admin.site.register(MeetingCategories)
+admin.site.register(MeetingCategories, CategoryAdmin)

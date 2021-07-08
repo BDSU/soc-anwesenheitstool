@@ -1,5 +1,6 @@
 from django import forms
 from .models import Meeting
+from .models import MeetingCategories
 
 
 class MeetingForm(forms.ModelForm):
@@ -11,5 +12,5 @@ class MeetingForm(forms.ModelForm):
     date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
     begin = forms.TimeField(widget=forms.TimeInput(format='%H:%M'))
     end = forms.TimeField(widget=forms.TimeInput(format='%H:%M'))
-    category = forms.ChoiceField(
-        label='Kategorie', choices=Meeting.CATEGORIES)
+    category = forms.ModelMultipleChoiceField(queryset=MeetingCategories.objects.all())
+    #category = forms.ChoiceField(label='Kategorie', choices=)
