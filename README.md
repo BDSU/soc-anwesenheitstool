@@ -35,6 +35,10 @@ Create:
 ```
 python manage.py createsuperuser
 ```
+Falls von git bash aus:
+```
+winpty python manage.py createsuperuser
+```
 
 user: `admin-v`, `admin-k`
 
