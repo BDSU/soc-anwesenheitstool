@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load qr_code %}
+{% load meetup_extras %}
+
+
+
+{% block title %}
+{{ meeting.name }} - Details,
+{% endblock title %}
+
+{% block content %}
+<h4>Your QR Code for the Meeting: {{meeting.name}}</h4>
+
+    Date: {{meeting.date}}<br>
+    Begin:{{meeting.begin}}<br>
+    End:{{meeting.end}}<br>
+    <br>
+
+    {% settings_value "HOSTNAME"  as hostname%}
+    {% url 'meeting_checkin' meeting.presence_registration_uuid as checkin_url %}
+
+    <code>{% qr_from_text hostname|add:checkin_url size="L" image_format="svg" %}</code>
+    <br>
+
+    <a href="{% url "index"%}" class="btn btn-sm btn-info">Zurück</a>
+    <a href="{% url "meeting_checkin" meeting.presence_registration_uuid %}" class="btn btn-sm btn-danger">Zur Anmeldung</a>
+
+{% endblock content %}

@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 {% load crispy_forms_filters %}
-
 {% load crispy_forms_tags %}
-{% load qr_code %}
 
 {% block title %}
 Meetings -
@@ -30,12 +28,14 @@ Meetings -
         
         <ul class="list-group">
             {% for meeting in meetings %}
-            <li class="list-group-item list-group-item-action">
-                {{meeting.name}} - 
-                {{meeting.date}} - 
-                {{meeting.begin}} - 
-                {{meeting.end}} - 
-                {{meeting.category}}
+            <li class="list-group-item list-group-item-action" >
+                <a href="{% url "meeting_details" meeting.id %}">
+                    {{meeting.name}} -
+                    {{meeting.date}} -
+                    {{meeting.begin}} -
+                    {{meeting.end}} -
+                    {{meeting.category}}
+                </a>
 
                 <div class="float-right">
                     <a href="{% url "update_meeting" meeting.id %}" class="btn btn-sm btn-info">Bearbeiten</a>

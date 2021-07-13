@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+{{ meeting.name }} - Anmeldung,
+{% endblock title %}
+
+{% block content %}
+
+<h4>Willkommen bei der Anmeldung des Meeting: {{meeting.name}}</h4>
+
+    Date: {{meeting.date}}<br>
+    Begin:{{meeting.begin}}<br>
+    End:{{meeting.end}}<br>
+    <br>
+
+    <a href="{% url "index"%}" class="btn btn-sm btn-danger">Anmelden</a>
+
+{% endblock content %}

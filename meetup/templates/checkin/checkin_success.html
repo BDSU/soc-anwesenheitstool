@@ -1,0 +1,11 @@
+{% extends 'checkin/_checkin_base.html' %}
+
+{% block card_content %}
+    <h5 class="card-title">Anwesenheit bestätigt!</h5>
+    <h6 class="card-subtitle mb-2 text-muted">{{ meeting.name }}</h6>
+     <div class="card bg-success">
+            <div class="card_body mx-2">
+                <p class="card-text text-white">Du wurdest erfolgreich als anwesend registriert!</p>
+            </div>
+        </div>
+{% endblock %}

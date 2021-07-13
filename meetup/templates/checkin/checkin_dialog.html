@@ -1,0 +1,19 @@
+{% extends 'checkin/_checkin_base.html' %}
+
+{% block card_content %}
+    <h5 class="card-title">Anwesenheit bestätigen</h5>
+    <h6 class="card-subtitle mb-2 text-muted">{{ meeting.name }}</h6>
+    <p class="card-text">Klicke auf den Button um deine Anwesenheit zu bestätigen</p>
+    {% if not checked_in %}
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Anwesenheit bestätigen</button>
+        </form>
+    {% else %}
+        <div class="card bg-primary">
+            <div class="card_body mx-2">
+                <p class="card-text text-white">Du bist bereits als anwesend registriert</p>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

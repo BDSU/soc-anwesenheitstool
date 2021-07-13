@@ -12,5 +12,5 @@ class MeetingForm(forms.ModelForm):
     date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
     begin = forms.TimeField(widget=forms.TimeInput(format='%H:%M'))
     end = forms.TimeField(widget=forms.TimeInput(format='%H:%M'))
-    category = forms.ModelMultipleChoiceField(queryset=MeetingCategories.objects.all())
+    category = forms.ModelChoiceField(queryset=MeetingCategories.objects.all())
     #category = forms.ChoiceField(label='Kategorie', choices=)

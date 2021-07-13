@@ -1,6 +1,13 @@
-from django.shortcuts import redirect, render
+import uuid
+
+from django.contrib.auth.decorators import login_required
+from django.http import HttpRequest, HttpResponseForbidden, Http404, HttpResponseBadRequest
+from django.shortcuts import redirect, render, get_object_or_404
+from django.views.decorators.http import require_http_methods
+from django.views.generic import DetailView
+
 from .forms import MeetingForm
-from .models import Meeting
+from .models import Meeting, Participant
 
 
 def index(request):
@@ -17,6 +24,13 @@ def index(request):
     meetings = Meeting.objects.all()
 
     return render(request, 'index.html', {'form': form, "meetings": meetings})
+
+
+class MeetingDetailView(DetailView):
+    model = Meeting
+    slug_field = "pk"
+    template_name = "meeting_details.html"
+    context_object_name = "meeting"
 
 
 def update_meeting(request, pk):
@@ -36,3 +50,33 @@ def delete_meeting(request, pk):
     meeting = Meeting.objects.get(id=pk)
     meeting.delete()
     return redirect("index")
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def checkin_view(request: HttpRequest, slug: uuid.UUID):
+    # This is a function-based view, because form-submission without an actual form is not really
+    # supported by any generic view :(
+    meeting = get_object_or_404(Meeting, presence_registration_uuid=slug)
+
+    assert request.user.is_authenticated
+    user = request.user
+
+    try:
+        participant = user.participant_set.filter(meeting_id=meeting.pk).get()
+    except Participant.DoesNotExist:
+        return HttpResponseForbidden("Benutzer ist nicht zur Veranstaltung eingeladen")
+
+    context = {'meeting': meeting}
+    if request.method == "GET":
+        return render(request, template_name="checkin/checkin_dialog.html", context={**context, 'checked_in': participant.attendant})
+    else:
+        assert request.method == "POST"
+        if participant.attendant:
+            return HttpResponseBadRequest("Benutzer ist bereits als anwesend markiert")
+
+        participant.attendant = True
+        participant.save()
+
+        return render(request, template_name="checkin/checkin_success.html", context=context)
+

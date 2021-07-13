@@ -1,25 +1,30 @@
+import uuid
+
+from django.contrib.auth import get_user_model
 from django.db import models
-from django.contrib.auth.models import User
 
 
 class MeetingCategories(models.Model):
     name = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name_plural = "Meeting Categories"
+        verbose_name = "Meeting Category"
 
     def __str__(self):
         return self.name
 
 
 class Participant(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    meeting = models.ForeignKey('Meeting', on_delete=models.CASCADE)
     attendant = models.BooleanField()
     optional = models.BooleanField()
-    event = models.ForeignKey('Meeting', on_delete=models.CASCADE, blank=True, null=True)
+
+    class Meta:
+        unique_together = ('user', 'meeting')
 
     def __str__(self):
-        if self.attendant:
-            attendant_str = ''
-        else:
-            attendant_str = 'nicht'
         return f'{self.user}'
 
 
@@ -28,10 +33,12 @@ class Meeting(models.Model):
     date = models.DateField()
     begin = models.TimeField()
     end = models.TimeField()
-    category = models.ForeignKey('MeetingCategories', on_delete=models.CASCADE, blank=True, null=True)
+    category = models.ForeignKey('MeetingCategories', on_delete=models.CASCADE, null=True)
     created = models.DateTimeField(auto_now_add=True)
 
-    participants = models.ManyToManyField(Participant, blank=True)
+    participants = models.ManyToManyField(get_user_model(), blank=True, through=Participant)
+
+    presence_registration_uuid = models.UUIDField(default=uuid.uuid4, editable=False)
 
     def __str__(self):
         return self.name
