@@ -1,3 +1,4 @@
 django ~= 3.2
 django-crispy-forms ~=1.12
 django-qr-code ~=2.2
+git+https://github.com/DieMotivierten/django_microsoft_auth.git@23fc7eb7e66e6f3ea663e27bee2d37c418bb4671

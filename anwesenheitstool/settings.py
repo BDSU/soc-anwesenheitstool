@@ -25,7 +25,10 @@ SECRET_KEY = 'django-insecure-h181@$q-fcz8_c8m%gdwosmx*v87yym$txlwnxqo9x1n@xh-3d
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    'example.com'
+]
 
 HOSTNAME = 'http://127.0.0.1'
 
@@ -34,12 +37,17 @@ HOSTNAME = 'http://127.0.0.1'
 
 INSTALLED_APPS = [
     'meetup.apps.MeetupConfig',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+
+    'microsoft_auth',
+
     'crispy_forms',
     'qr_code',
 ]
@@ -69,6 +77,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                'microsoft_auth.context_processors.microsoft',
             ],
         },
     },
@@ -145,3 +155,17 @@ QR_CODE_CACHE_ALIAS = 'qr-code'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = [
+    'microsoft_auth.backends.MicrosoftAuthenticationBackend',
+    'django.contrib.auth.backends.ModelBackend'  # still support normal superusers for using the admin
+]
+
+MICROSOFT_AUTH_CLIENT_ID = '***REMOVED***'
+MICROSOFT_AUTH_CLIENT_SECRET = '***REMOVED***'
+MICROSOFT_AUTH_TENANT_ID = '***REMOVED***'
+
+# include Microsoft Accounts, Office 365 Enterpirse and Azure AD accounts
+MICROSOFT_AUTH_LOGIN_TYPE = 'ma'
