@@ -7,7 +7,7 @@ from django.contrib.auth.forms import UserChangeForm
 from django.forms import forms
 from django.shortcuts import redirect, render
 from django.urls import path
-from microsoft_auth.models import User
+from django.contrib.auth.models import User
 
 from .models import Meeting, MeetingCategories, Participant, GroupParticipants
 from .forms import CsvImportForm
@@ -25,7 +25,7 @@ class GroupParticipantsInlineAdmin(admin.StackedInline):
     extra = 0
 
 
-# @admin.register(Meeting)
+@admin.register(Meeting)
 class MeetingAdmin(admin.ModelAdmin):
     list_display = ('name', 'date', 'begin', 'end', 'category', 'created')
     list_filter = ('name', 'date', 'category')
@@ -39,12 +39,12 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 # Unregister the provided model admin
-# admin.site.unregister(User)
+admin.site.unregister(User)
 
 
 # Register out own model admin, based on the default UserAdmin
-@admin.register(Meeting)
-class CsvUploadAdmin(admin.ModelAdmin):
+@admin.register(User)
+class CsvUploadAdmin(UserAdmin):
     change_list_template = "admin/csv_form.html"
 
     def get_urls(self):
@@ -86,14 +86,45 @@ class CsvUploadAdmin(admin.ModelAdmin):
         ID; Username; first_name; last_name; email; password
         The file has no header and a delimiter of ;
         """
-        data = list(csv.reader(csv_file, delimiter=';'))
+        data = csv.DictReader(csv_file, delimiter=',')
+
+        # userPrincipalName
+        # displayName
+        # surname
+        # mail
+        # givenName
+        # id
+        # userType
+        # jobTitle
+        # department
+        # accountEnabled
+        # usageLocation
+        # streetAddress
+        # state
+        # country
+        # officeLocation
+        # city
+        # postalCode
+        # telephoneNumber
+        # mobilePhone
+        # alternateEmailAddress
+        # ageGroup
+        # consentProvidedForMinor
+        # legalAgeGroupClassification
+        # companyName
+        # creationType
+        # directorySynced
+        # invitationState
+        # identityIssuer
+        # createdDateTime
+
         User.objects.bulk_create([
             User(
-                username=row[1],
-                first_name=row[2],
-                last_name=row[3],
-                email=row[4],
-                password=row[5],
+                username=row['﻿userPrincipalName'],
+                first_name=row['givenName'],
+                last_name=row['surname'],
+                email=row['mail'],
+                # password=row[5],
                 is_staff=False,
             ) for row in data
         ])
