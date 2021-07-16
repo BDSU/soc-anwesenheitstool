@@ -36,8 +36,6 @@ HOSTNAME = 'http://127.0.0.1'
 # Application definition
 
 INSTALLED_APPS = [
-    'meetup.apps.MeetupConfig',
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,6 +48,8 @@ INSTALLED_APPS = [
 
     'crispy_forms',
     'qr_code',
+
+    'meetup.apps.MeetupConfig',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
