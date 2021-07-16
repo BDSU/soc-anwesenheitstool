@@ -70,7 +70,7 @@ class CsvUploadAdmin(UserAdmin):
         if request.FILES['csv_file'].name.endswith('csv'):
 
             try:
-                decoded_file = request.FILES['csv_file'].read().decode('utf-8')
+                decoded_file = request.FILES['csv_file'].read().decode('utf-8-sig')
             except UnicodeDecodeError as e:
                 self.message_user(
                     request,
@@ -120,7 +120,7 @@ class CsvUploadAdmin(UserAdmin):
 
         User.objects.bulk_create([
             User(
-                username=row['﻿userPrincipalName'],
+                username=row['userPrincipalName'],
                 first_name=row['givenName'],
                 last_name=row['surname'],
                 email=row['mail'],
