@@ -1,12 +1,17 @@
 from django.contrib import admin
-from .models import Meeting, MeetingCategories, Participant
+from .models import Meeting, MeetingCategories, Participant, GroupParticipants
 
 admin.site.site_header = "Anwesenheitstool Dashboard"
 
 
 class ParticipantAdminInline(admin.TabularInline):
     model = Participant
-    extra = 1
+    extra = 0
+
+
+class GroupParticipantsInlineAdmin(admin.StackedInline):
+    model = GroupParticipants
+    extra = 0
 
 
 class MeetingAdmin(admin.ModelAdmin):
@@ -14,7 +19,7 @@ class MeetingAdmin(admin.ModelAdmin):
     list_filter = ('name', 'date', 'category')
     fields = ('name', 'date', 'begin', 'end', 'category')
     model = Meeting
-    inlines = [ParticipantAdminInline]
+    inlines = [ParticipantAdminInline, GroupParticipantsInlineAdmin]
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name']
