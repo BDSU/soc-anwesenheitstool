@@ -3,6 +3,10 @@ from .models import Meeting
 from .models import MeetingCategories
 
 
+class CsvImportForm(forms.Form):
+    csv_file = forms.FileField()
+
+
 class MeetingForm(forms.ModelForm):
     class Meta:
         model = Meeting
@@ -13,4 +17,3 @@ class MeetingForm(forms.ModelForm):
     begin = forms.TimeField(widget=forms.TimeInput(format='%H:%M'))
     end = forms.TimeField(widget=forms.TimeInput(format='%H:%M'))
     category = forms.ModelChoiceField(queryset=MeetingCategories.objects.all())
-    #category = forms.ChoiceField(label='Kategorie', choices=)
