@@ -1,13 +1,32 @@
 import uuid
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponseForbidden, Http404, HttpResponseBadRequest
+from django.http import HttpRequest, HttpResponseForbidden, HttpResponseBadRequest, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.decorators.http import require_http_methods
 from django.views.generic import DetailView
+import csv
 
 from .forms import MeetingForm
 from .models import Meeting, Participant
+
+
+def export(request, pk):
+    response = HttpResponse(content_type='text/csv')
+    teilnehmer_list = Participant.objects.filter(meeting=pk)
+    meeting = Meeting.objects.get(id=pk)
+
+    writer = csv.writer(response)
+    writer.writerow(['Vorname', 'Nachname', 'Anwesenheit'])
+
+    for teilnehmer in teilnehmer_list:
+        attendance = "anwesend" if teilnehmer.attendant else "nicht anwesend"
+
+        writer.writerow([teilnehmer.user.first_name, teilnehmer.user.last_name, attendance])
+
+    csv_name = meeting.name + " - " + str(meeting.date) + ".csv"
+    response['Content-Disposition'] = 'attachment; filename=' + csv_name
+    return response
 
 
 def index(request):
@@ -79,4 +98,3 @@ def checkin_view(request: HttpRequest, slug: uuid.UUID):
         participant.save()
 
         return render(request, template_name="checkin/checkin_success.html", context=context)
-
