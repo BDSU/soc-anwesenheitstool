@@ -1,21 +1,12 @@
 {# This template is only a base template for others in the same folder - it's useless on it's own #}
 {% extends "base.html" %}
 
-{% block navbar %}
-    <nav class="navbar navbar-light bg-light">
-  <div class="container-fluid">
-    <a class="navbar-brand">Anwesenheitstool</a>
-    <span class="navbar-text">
-        {{ user.username }}
-    </span>
-  </div>
-</nav>
-{% endblock %}
-
 {% block content %}
-    <div class="card">
+    <div class="container my-5" >
+      <div class="card text-center">
         <div class="card-body">
             {% block card_content %}{% endblock %}
         </div>
+      </div>
     </div>
 {% endblock %}

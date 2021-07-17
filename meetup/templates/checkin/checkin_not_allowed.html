@@ -1,0 +1,12 @@
+{% extends 'checkin/_checkin_base.html' %}
+
+{% block card_content %}
+    <h5 class="card-title">Anmeldung nicht möglich!</h5>
+    <h6 class="card-subtitle mb-2 text-muted">{{ meeting.name }}</h6>
+     <div class="card bg-danger">
+            <div class="card_body mx-2">
+                <p class="card-text text-white">Du bist leider nicht zur Veranstaltung eingeladen!</p>
+                <p class="card-text text-white">Bitte wende dich an den Veranstalter.</p>
+            </div>
+        </div>
+{% endblock %}

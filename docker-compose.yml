@@ -1,0 +1,38 @@
+version: "3"
+services:
+  django:
+    build: .
+    command: gunicorn
+    environment:
+      - DEBUG=False
+      - SECRET_KEY=***REMOVED***
+      - ALLOWED_HOSTS=***REMOVED***
+      - DATABASE_URL=sqlite:////data/db.sqlite3
+    volumes:
+      - "meetup-data:/data"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.django.rule=Host(`***REMOVED***`)
+      - traefik.http.routers.django.tls.certresolver=letsencrypt
+
+  traefik:
+    image: "traefik"
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.letsencrypt.acme.email=***REMOVED***"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/certs/acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "certs:/certs"
+volumes:
+  meetup-data: {}
+  certs: {}

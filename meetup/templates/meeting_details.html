@@ -9,20 +9,27 @@
 {% endblock title %}
 
 {% block content %}
-<h4>Your QR Code for the Meeting: {{meeting.name}}</h4>
+    <div class="container my-5" >
 
-    Date: {{meeting.date}}<br>
-    Begin:{{meeting.begin}}<br>
-    End:{{meeting.end}}<br>
-    <br>
+        <div class="card text-center">
+            <div class="card-header">
+                 <h4> QR Code für das Treffen: {{meeting.name}}</h4>
+            </div>
+            {% abs_url 'meeting_checkin' meeting.presence_registration_uuid as checkin_url %}
 
-    {% settings_value "HOSTNAME"  as hostname%}
-    {% url 'meeting_checkin' meeting.presence_registration_uuid as checkin_url %}
+            <code class="card-img-top" >{% qr_from_text checkin_url size="L" image_format="svg" %}</code>
+             <div class="card-body">
+                 <p class="card-text">
+                     {{meeting.category}}<br>
+                     {{meeting.date}}<br>
+                     {{meeting.begin}} - {{meeting.end}}
+                 </p>
+             </div>
+        </div>
+        <div class=" my-5 text-center">
+            <a style="width: 35%" href="{% url "index"%}" class="btn btn-sm btn-info ">Zurück</a>
+        </div>
+</div>
 
-    <code>{% qr_from_text hostname|add:checkin_url size="L" image_format="svg" %}</code>
-    <br>
-
-    <a href="{% url "index"%}" class="btn btn-sm btn-info">Zurück</a>
-    <a href="{% url "meeting_checkin" meeting.presence_registration_uuid %}" class="btn btn-sm btn-danger">Zur Anmeldung</a>
 
 {% endblock content %}
