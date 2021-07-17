@@ -1,26 +1,23 @@
 import csv
 import io
 
-from django.contrib import admin, messages
-from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.forms import UserChangeForm
-from django.forms import forms
-from django.shortcuts import redirect, render
-from django.urls import path
-from django.contrib.auth.models import User
-
 import django.forms as forms
 from django.contrib import admin
+from django.contrib import messages
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import GroupAdmin
+from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
+from django.contrib.auth.models import User
 from django.forms.utils import ErrorList
+from django.shortcuts import redirect
+from django.urls import path
 from django.urls import reverse
 from django.utils.html import format_html
 
-from .models import Meeting, MeetingCategories, Participant, GroupParticipants
 from .forms import CsvImportForm
+from .models import Meeting, MeetingCategories, Participant, GroupParticipants
 
 admin.site.site_header = "Anwesenheitstool Dashboard"
 
