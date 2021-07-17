@@ -1,16 +1,18 @@
 import uuid
+import csv
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponseForbidden, HttpResponseBadRequest, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.decorators.http import require_http_methods
 from django.views.generic import DetailView
-import csv
+from django.contrib.admin.views.decorators import staff_member_required
 
 from .forms import MeetingForm
 from .models import Meeting, Participant
 
 
+@staff_member_required
 def export(request, pk):
     response = HttpResponse(content_type='text/csv')
     teilnehmer_list = Participant.objects.filter(meeting=pk)
@@ -22,7 +24,8 @@ def export(request, pk):
     for teilnehmer in teilnehmer_list:
         attendance = "anwesend" if teilnehmer.attendant else "nicht anwesend"
 
-        writer.writerow([teilnehmer.user.first_name, teilnehmer.user.last_name, attendance])
+        writer.writerow([teilnehmer.user.first_name,
+                        teilnehmer.user.last_name, attendance])
 
     csv_name = meeting.name + " - " + str(meeting.date) + ".csv"
     response['Content-Disposition'] = 'attachment; filename=' + csv_name
@@ -52,6 +55,7 @@ class MeetingDetailView(DetailView):
     context_object_name = "meeting"
 
 
+@staff_member_required
 def update_meeting(request, pk):
     meeting = Meeting.objects.get(id=pk)
 
@@ -65,6 +69,7 @@ def update_meeting(request, pk):
     return render(request, "update_meeting.html", {"meeting_edit_form": form})
 
 
+@staff_member_required
 def delete_meeting(request, pk):
     meeting = Meeting.objects.get(id=pk)
     meeting.delete()
