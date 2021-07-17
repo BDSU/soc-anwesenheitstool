@@ -4,15 +4,18 @@ services:
     build: .
     command: gunicorn
     environment:
-      - DEBUG=False
-      - SECRET_KEY=***REMOVED***
-      - ALLOWED_HOSTS=***REMOVED***
-      - DATABASE_URL=sqlite:////data/db.sqlite3
+      - DEBUG=${DJANGO_DEBUG}
+      - SECRET_KEY=${DJANGO_SECRET_KEY}
+      - ALLOWED_HOSTS=${HOSTNAME}
+      - DATABASE_URL=${DJANGO_DATABASE_URL}
+      - MICROSOFT_AUTH_CLIENT_ID=${DJANGO_MICROSOFT_AUTH_CLIENT_ID}
+      - MICROSOFT_AUTH_CLIENT_SECRET=${DJANGO_MICROSOFT_AUTH_CLIENT_SECRET}
+      - MICROSOFT_AUTH_TENANT_ID=${DJANGO_MICROSOFT_AUTH_TENANT_ID}
     volumes:
       - "meetup-data:/data"
     labels:
       - traefik.enable=true
-      - traefik.http.routers.django.rule=Host(`***REMOVED***`)
+      - traefik.http.routers.django.rule=Host(`${HOSTNAME}`)
       - traefik.http.routers.django.tls.certresolver=letsencrypt
 
   traefik:
@@ -24,7 +27,7 @@ services:
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.letsencrypt.acme.email=***REMOVED***"
+      - "--certificatesresolvers.letsencrypt.acme.email=${LETSENCRYPT_EMAIL}"
       - "--certificatesresolvers.letsencrypt.acme.storage=/certs/acme.json"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
     ports:

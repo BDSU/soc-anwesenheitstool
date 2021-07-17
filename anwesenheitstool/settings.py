@@ -154,9 +154,9 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend'  # still support normal superusers for using the admin
 ]
 
-MICROSOFT_AUTH_CLIENT_ID = '***REMOVED***'
-MICROSOFT_AUTH_CLIENT_SECRET = '***REMOVED***'
-MICROSOFT_AUTH_TENANT_ID = '***REMOVED***'
+MICROSOFT_AUTH_CLIENT_ID = env.str('MICROSOFT_AUTH_CLIENT_ID', default='')
+MICROSOFT_AUTH_CLIENT_SECRET = env.str('MICROSOFT_AUTH_CLIENT_SECRET', default='')
+MICROSOFT_AUTH_TENANT_ID = env.str('MICROSOFT_AUTH_TENANT_ID', default='')
 
 # include Microsoft Accounts, Office 365 Enterpirse and Azure AD accounts
 MICROSOFT_AUTH_LOGIN_TYPE = 'ma'

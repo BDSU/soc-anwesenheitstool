@@ -3,3 +3,5 @@ db.sqlite3
 venv
 Dockerfile
 docker-compose.yml
+.env
+.env.template
