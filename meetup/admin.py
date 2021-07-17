@@ -26,9 +26,18 @@ class MeetingAdmin(admin.ModelAdmin):
     model = Meeting
     inlines = [ParticipantAdminInline, GroupParticipantsInlineAdmin]
 
+    def get_fields(self, request, obj=None):
+        """
+        Hide all readonly_fields if we are on the create view
+        """
+        fields = list(super().get_fields(request, obj=obj))
+        if obj is None:
+            for field in self.readonly_fields:
+                fields.remove(field)
+        return fields
+
     def show_firm_url(self, obj):
         return format_html("<a href='{url}'>Download</a>", url=reverse('export', args=[obj.id]))
-        # return format_html("<a href='{url}'>Download</a>", url="http://127.0.0.1:8000/export/" + str(obj.id))
 
     show_firm_url.short_description = "participantlist"
 
