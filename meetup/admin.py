@@ -25,10 +25,10 @@ class GroupParticipantsInlineAdmin(admin.StackedInline):
 
 class MeetingAdmin(admin.ModelAdmin):
     list_display = ('name', 'date', 'begin', 'end',
-                    'category', 'created', 'show_firm_url')
+                    'category', 'created', 'show_firm_url', 'show_meeting_url')
     list_filter = ('name', 'date', 'category')
-    fields = ('name', 'date', 'begin', 'end', 'category', 'show_firm_url',)
-    readonly_fields = ('show_firm_url',)
+    fields = ('name', 'date', 'begin', 'end', 'category', 'show_firm_url','show_meeting_url')
+    readonly_fields = ('show_firm_url','show_meeting_url')
     model = Meeting
     inlines = [ParticipantAdminInline, GroupParticipantsInlineAdmin]
 
@@ -44,6 +44,9 @@ class MeetingAdmin(admin.ModelAdmin):
 
     def show_firm_url(self, obj):
         return format_html("<a href='{url}'>Download</a>", url=reverse('export', args=[obj.id]))
+
+    def show_meeting_url(self, obj):
+        return format_html("<a href='{url}'>Anmelden</a>", url=reverse('meeting_checkin', args=[obj.presence_registration_uuid]))
 
     show_firm_url.short_description = "participantlist"
 

@@ -1,5 +1,4 @@
 import uuid
-import csv
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponseForbidden, HttpResponseBadRequest, HttpResponse
@@ -7,6 +6,11 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.views.decorators.http import require_http_methods
 from django.views.generic import DetailView
 from django.contrib.admin.views.decorators import staff_member_required
+
+from django.contrib.auth import logout
+
+import csv
+
 
 from .forms import MeetingForm
 from .models import Meeting, Participant
@@ -32,8 +36,13 @@ def export(request, pk):
     return response
 
 
+@login_required
 def index(request):
+    assert request.user.is_authenticated
+    user = request.user
+
     # if this is a POST request we need to process the form data
+
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = MeetingForm(request.POST)
@@ -42,10 +51,10 @@ def index(request):
             form.save()
             return redirect("index")
 
-    form = MeetingForm()
-    meetings = Meeting.objects.all()
+    meetings = Meeting.objects.filter(participant__user=user)
 
-    return render(request, 'index.html', {'form': form, "meetings": meetings})
+    return render(request, 'index.html',
+                  {"meetings": meetings, 'user_is_admin': user.is_superuser})
 
 
 class MeetingDetailView(DetailView):
@@ -66,7 +75,7 @@ def update_meeting(request, pk):
         if form.is_valid():
             form.save()
             return redirect("index")
-    return render(request, "update_meeting.html", {"meeting_edit_form": form})
+    return render(request, "legacy/update_meeting.html", {"meeting_edit_form": form})
 
 
 @staff_member_required
@@ -85,15 +94,16 @@ def checkin_view(request: HttpRequest, slug: uuid.UUID):
 
     assert request.user.is_authenticated
     user = request.user
+    context = {'meeting': meeting}
 
     try:
         participant = user.participant_set.filter(meeting_id=meeting.pk).get()
     except Participant.DoesNotExist:
-        return HttpResponseForbidden("Benutzer ist nicht zur Veranstaltung eingeladen")
+        return render(request, template_name="checkin/checkin_not_allowed.html", context=context)
 
-    context = {'meeting': meeting}
     if request.method == "GET":
-        return render(request, template_name="checkin/checkin_dialog.html", context={**context, 'checked_in': participant.attendant})
+        return render(request, template_name="checkin/checkin_dialog.html",
+                      context={**context, 'checked_in': participant.attendant})
     else:
         assert request.method == "POST"
         if participant.attendant:
@@ -103,3 +113,8 @@ def checkin_view(request: HttpRequest, slug: uuid.UUID):
         participant.save()
 
         return render(request, template_name="checkin/checkin_success.html", context=context)
+
+
+def logout_view(request):
+    logout(request)
+    return redirect("index")

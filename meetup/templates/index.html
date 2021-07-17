@@ -7,52 +7,27 @@ Meetings -
 {% endblock title %}
 
 {% block content %}
-<div class="card">
-    <div class="card-header">
-        <h1 class="text-center">Anwesenheitstool</h1>
-    </div>
-    <div class="card-body">
 
-        <h4 class="py-2 rounded">Meetings hinzufügen</h4>
-        <form method="post">
-            {% csrf_token %}
-                {{ form.name|as_crispy_field }}
-                {{ form.date|as_crispy_field }}
-                {{ form.begin|as_crispy_field }}
-                {{ form.end|as_crispy_field }}
-                {{ form.category|as_crispy_field }}
-                <button type="submit" class="my-2 btn btn-success">Hinzufügen</button>
-        </form>
-
-        <h4 class="py-2 rounded">Alle Meetings</h4>
-        
-        <ul class="list-group">
-            {% for meeting in meetings %}
-            <li class="list-group-item list-group-item-action" >
-                <a href="{% url "meeting_details" meeting.id %}">
-                    {{meeting.name}} -
-                    {{meeting.date}} -
-                    {{meeting.begin}} -
-                    {{meeting.end}} -
-                    {{meeting.category}}
-                </a>
-
-                <div class="float-right">
-                    <a href="{% url "update_meeting" meeting.id %}" class="btn btn-sm btn-info">Bearbeiten</a>
-                    <a href="{% url "delete_meeting" meeting.id %}" class="btn btn-sm btn-danger">Löschen</a>
+    <div class="container mt-4">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for meeting in meetings %}
+            <div class="col">
+                <div class="card" style="width: 18rem;">
+                     <div class="card-body">
+                        <h5 class="card-title">{{meeting.name}}</h5>
+                         <p class="card-text">
+                             {{meeting.category}}<br>
+                             {{meeting.date}}<br>
+                             {{meeting.begin}} - {{meeting.end}}
+                         </p>
+                         {% if user_is_admin %}
+                            <a href="{% url "meeting_details" meeting.id %}" class="btn btn-primary small">Details</a>
+                         {% endif %}
+                     </div>
                 </div>
-            </li>
-            {% endfor %}
-        </ul>
+            </div>
+        {% endfor %}
+        </div>
     </div>
-</div>
-
-<script>
-    $(function () {
-      $("#id_date").datepicker({
-        format:'dd/mm/yyyy',
-      });
-    });
-  </script>
 
 {% endblock content %}

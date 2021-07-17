@@ -23,12 +23,21 @@
 </head>
 
 <body>
-    {% block navbar %} {% endblock %}
-    <div class="container mt-3">
-        {% block content %}
 
-        {% endblock content %}
-    </div>
+{% block navbar %}
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+            <a href="{% url "index" %}" class="navbar-brand">Anwesenheitstool </a>
+            <div class="d-flex">
+                <span class="navbar-text"> Nutzer: {{ user.username }}</span>
+                <a href="{% url "logout" %}" class="btn btn-outline-secondary mx-2" type="button">Abmelden</a>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block content %}
+{% endblock %}
 
 
     <!-- Optional JavaScript -->
