@@ -12,28 +12,23 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
+import environ
+
+env = environ.Env()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-from django.urls import reverse
-
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-h181@$q-fcz8_c8m%gdwosmx*v87yym$txlwnxqo9x1n@xh-3d'
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool('DEBUG', default=True)
 
-ALLOWED_HOSTS = [
-    'localhost',
-    'example.com'
-]
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = env.str('SECRET_KEY') if not DEBUG else 'debug-secret'
 
-HOSTNAME = 'http://127.0.0.1'
-
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', cast=str, default=['localhost'])
 
 # Application definition
 
@@ -58,6 +53,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -70,10 +66,10 @@ ROOT_URLCONF = 'anwesenheitstool.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'BACKEND':  'django.template.backends.django.DjangoTemplates',
+        'DIRS':     [],
         'APP_DIRS': True,
-        'OPTIONS': {
+        'OPTIONS':  {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
@@ -88,17 +84,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'anwesenheitstool.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': env.db_url('DATABASE_URL', default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -118,7 +109,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -132,7 +122,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
@@ -145,9 +134,9 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     },
     'qr-code': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'BACKEND':  'django.core.cache.backends.locmem.LocMemCache',
         'LOCATION': 'qr-code-cache',
-        'TIMEOUT': 3600
+        'TIMEOUT':  3600
     }
 }
 
@@ -173,3 +162,13 @@ MICROSOFT_AUTH_TENANT_ID = '***REMOVED***'
 MICROSOFT_AUTH_LOGIN_TYPE = 'ma'
 
 LOGIN_URL = '/microsoft/to-auth-redirect'
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+SILENCED_SYSTEM_CHECKS = [
+    "security.W004",  # Warning about SECURE_HSTS_SECONDS, this could be handled by our reverse proxy
+    "security.W008",  # Redirecting to SSL should be handled by our reverse proxy
+]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
