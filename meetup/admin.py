@@ -1,8 +1,14 @@
+import django.forms as forms
 from django.contrib import admin
-from .models import Meeting, MeetingCategories, Participant, GroupParticipants
-from django.utils.html import format_html
+from django.contrib.admin.widgets import FilteredSelectMultiple
+from django.contrib.auth import get_user_model
+from django.contrib.auth.admin import GroupAdmin
+from django.contrib.auth.models import Group
+from django.forms.utils import ErrorList
 from django.urls import reverse
-from django.shortcuts import redirect, render
+from django.utils.html import format_html
+
+from .models import Meeting, MeetingCategories, Participant, GroupParticipants
 
 admin.site.site_header = "Anwesenheitstool Dashboard"
 
@@ -49,3 +55,43 @@ class CategoryAdmin(admin.ModelAdmin):
 
 admin.site.register(Meeting, MeetingAdmin)
 admin.site.register(MeetingCategories, CategoryAdmin)
+
+
+class CustomGroupAdminForm(forms.ModelForm):
+    """
+    Make adding multiple users to a group easier
+
+    Source: https://gist.github.com/Grokzen/a64321dd69339c42a184
+    """
+    users = forms.ModelMultipleChoiceField(label=get_user_model().Meta.verbose_name_plural,
+                                           queryset=get_user_model().objects.all(),
+                                           widget=FilteredSelectMultiple(get_user_model().Meta.verbose_name, False))
+
+    class Meta:
+        model = Group
+        exclude = []
+
+    def __init__(self, data=None, files=None, auto_id='id_%s', prefix=None, initial=None, error_class=ErrorList,
+                 label_suffix=None, empty_permitted=False, instance=None, use_required_attribute=None, renderer=None):
+        super().__init__(data, files, auto_id, prefix, initial, error_class, label_suffix, empty_permitted, instance,
+                         use_required_attribute, renderer)
+
+        if self.instance and self.instance.pk:
+            self.fields['users'].initial = self.instance.user_set.all()
+
+    def save(self, commit=True):
+        group = super().save(commit=commit)
+
+        if group.pk is not None:
+            group.user_set.set(self.cleaned_data['users'])
+            self.save_m2m()
+
+        return group
+
+
+class CustomGroupAdmin(GroupAdmin):
+    form = CustomGroupAdminForm
+
+
+admin.site.unregister(Group)
+admin.site.register(Group, CustomGroupAdmin)
