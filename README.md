@@ -40,12 +40,6 @@ Falls von git bash aus:
 winpty python manage.py createsuperuser
 ```
 
-user: `admin-v`, `admin-k`
-
-mail: `***REMOVED***`, `***REMOVED***`
-
-password: `summerofcode`, `summerofcode`
-
 ## Deploying
 
 ### Configuration
