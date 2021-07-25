@@ -47,7 +47,9 @@ Copy `.env.template` to `.env`. Then add your configuration into the new `.env` 
 
 To check if your configuration is ready for deployment, run `docker-compose run django check --deploy` to do some automated checks.
 
-Use Step 3 of the [Quick Start Guide](https://django-microsoft-auth.readthedocs.io/en/latest/usage.html#quickstart) of django-microsoft-auth to obtain your keys.
+Use Step 3 of the [Quick Start Guide](https://django-microsoft-auth.readthedocs.io/en/latest/usage.html#quickstart) of django-microsoft-auth to obtain your Microsoft related keys.
+
+For generating the `DJANGO_SECRET_KEY`, use any password generator you like. The deployment check will complain if your key is too short, so make sure to run it!
 
 ### Docker-compose
 Before doing `docker-compose up` make sure to run `docker-compose run django migrate` to initialize the database. 
