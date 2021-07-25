@@ -45,6 +45,10 @@ winpty python manage.py createsuperuser
 ### Configuration
 Copy `.env.template` to `.env`. Then add your configuration into the new `.env` file.
 
+To check if your configuration is ready for deployment, run `docker-compose run django check --deploy` to do some automated checks.
+
+Use Step 3 of the [Quick Start Guide](https://django-microsoft-auth.readthedocs.io/en/latest/usage.html#quickstart) of django-microsoft-auth to obtain your keys.
+
 ### Docker-compose
 Before doing `docker-compose up` make sure to run `docker-compose run django migrate` to initialize the database. 
 
