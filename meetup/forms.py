@@ -17,3 +17,7 @@ class MeetingForm(forms.ModelForm):
     begin = forms.TimeField(widget=forms.TimeInput(format='%H:%M'))
     end = forms.TimeField(widget=forms.TimeInput(format='%H:%M'))
     category = forms.ModelChoiceField(queryset=MeetingCategories.objects.all())
+
+
+class ExcuseForm(forms.Form):
+    meeting_id = forms.CharField()
