@@ -1,18 +1,19 @@
+import csv
+import http
 import uuid
 
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponseForbidden, HttpResponseBadRequest, HttpResponse
+from django.core.exceptions import BadRequest
+from django.db.models import Subquery, OuterRef
+from django.db.models.functions import Coalesce
+from django.http import HttpRequest, HttpResponseBadRequest, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.decorators.http import require_http_methods
 from django.views.generic import DetailView
-from django.contrib.admin.views.decorators import staff_member_required
 
-from django.contrib.auth import logout
-
-import csv
-
-
-from .forms import MeetingForm
+from .forms import MeetingForm, ExcuseForm
 from .models import Meeting, Participant
 
 
@@ -51,7 +52,14 @@ def index(request):
             form.save()
             return redirect("index")
 
-    meetings = Meeting.objects.filter(participant__user=user)
+    def subquery_get_current_user_participant_field_or_false(field):
+        return Coalesce(Subquery(Participant.objects.filter(meeting=OuterRef('pk'), user=user)
+                                 .values_list(field)[:1]), False)
+
+    meetings = Meeting.objects.filter(participant__user=user).annotate(
+        allow_excuse=subquery_get_current_user_participant_field_or_false('allow_excuse'),
+        excused=subquery_get_current_user_participant_field_or_false('excused')
+    )
 
     return render(request, 'index.html',
                   {"meetings": meetings, 'user_is_admin': user.is_superuser})
@@ -118,3 +126,28 @@ def checkin_view(request: HttpRequest, slug: uuid.UUID):
 def logout_view(request):
     logout(request)
     return redirect("index")
+
+
+def excuse(request, action: str):
+    if not (action == 'excuse' or action == 'unexcuse'):
+        raise BadRequest()
+
+    if not request.user.is_authenticated:
+        return HttpResponse(status=http.HTTPStatus.UNAUTHORIZED)
+
+    form = ExcuseForm(request.POST)
+    if not form.is_valid():
+        raise BadRequest()
+
+    meeting_id = form.cleaned_data['meeting_id']
+
+    try:
+        participant = Participant.objects.get(meeting_id=meeting_id, user=request.user)
+    except Participant.DoesNotExist:
+        raise BadRequest()
+
+    participant.excused = (action == 'excuse')
+    participant.save()
+
+    return redirect('index')
+

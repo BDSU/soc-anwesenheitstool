@@ -23,6 +23,20 @@ Meetings -
                          {% if user_is_admin %}
                             <a href="{% url "meeting_details" meeting.id %}" class="btn btn-primary small">Details</a>
                          {% endif %}
+                         {% if meeting.allow_excuse %}
+                             <form method="post">
+                             {% csrf_token %}
+                                 <input type="hidden" name="meeting_id" value="{{ meeting.id }}">
+                                 {% if not meeting.excused %}
+                                     <button type="submit" class="btn btn-danger" formaction="/excuse/excuse">Absagen
+                                     </button>
+                                 {% else %}
+                                     <button type="submit" class="btn btn-primary" formaction="/excuse/unexcuse">
+                                         Zusagen
+                                     </button>
+                                 {% endif %}
+                             </form>
+                         {% endif %}
                      </div>
                 </div>
             </div>

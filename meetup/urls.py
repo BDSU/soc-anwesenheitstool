@@ -11,4 +11,5 @@ urlpatterns = [
     path("update/<int:pk>/", views.update_meeting, name="update_meeting"),
     path("delete/<int:pk>/", views.delete_meeting, name="delete_meeting"),
     path('export/<int:pk>/', views.export, name='export'),
+    path('excuse/<str:action>', views.excuse, name='excuse_me'),
 ]
