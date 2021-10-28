@@ -27,7 +27,7 @@ def export(request, pk):
     writer.writerow(['Vorname', 'Nachname', 'Anwesenheit'])
 
     for teilnehmer in teilnehmer_list:
-        attendance = "anwesend" if teilnehmer.attendant else "nicht anwesend"
+        attendance = "anwesend" if teilnehmer.attendant else "abgemeldet" if teilnehmer.excused else "nicht anwesend"
 
         writer.writerow([teilnehmer.user.first_name,
                         teilnehmer.user.last_name, attendance])
