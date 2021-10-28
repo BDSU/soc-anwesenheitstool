@@ -24,6 +24,9 @@ class Participant(models.Model):
     attendant = models.BooleanField(default=False)
     optional = models.BooleanField()
 
+    allow_excuse = models.BooleanField(default=False)
+    excused = models.BooleanField(default=False)
+
     class Meta:
         unique_together = ('user', 'meeting')
 
@@ -55,6 +58,8 @@ class GroupParticipants(models.Model):
     group = models.ForeignKey(Group, null=False, on_delete=models.DO_NOTHING)
     objects = EmptyManager()
     optional = models.BooleanField()
+
+    allow_excuse = models.BooleanField(default=False)
 
     class Meta:
         managed = False
