@@ -68,8 +68,18 @@ class GroupParticipants(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         # If a user is already a participant, do not create another Participant instance for them
-        create_for_users = self.group.user_set.exclude(pk__in=self.meeting.participants.values_list('pk'))
+        create_for_users = self.group.user_set.exclude(
+            pk__in=self.meeting.participants.values_list("pk")
+        )
 
         Participant.objects.bulk_create(
-            [Participant(user=user, meeting=self.meeting, optional=self.optional) for user in create_for_users]
+            [
+                Participant(
+                    user=user,
+                    meeting=self.meeting,
+                    optional=self.optional,
+                    allow_excuse=self.allow_excuse,
+                )
+                for user in create_for_users
+            ]
         )
